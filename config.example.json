@@ -11,6 +11,7 @@
     "discord_announce":    0000000000000000000,
     "discord_position":    0000000000000000000,
     "discord_role":        0000000000000000000,
+    "discord_admin":       0000000000000000000,
     "discord_pingid":      "&0000000000000000000",
     "puzprefix":           "https://yewlabs.mit.edu/puzzles/"
 }

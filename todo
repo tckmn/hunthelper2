@@ -1,5 +1,15 @@
-logging to file
-auto solved puzzle category
-move solved category to bottom
 new server setup???
 update docs
+race condition: can create puzzle twice
+when making puzzles really fast sometimes some queries don't get sent by sheets ("reconcile" operation?)
+manual operations to fix errors
+special puzzles not in rounds (e.g. scavenger hunt)
+morse/a1/etc commands
+auto refresh hint pages and send messages about hint status
+hint queue that auto prints next hint to hint coordination channel
+auto delete stray content in link columns
+test suite that is allowed destructive actions
+automate who's working on puzzle by sheets users active
+also pingable version of above
+metadata in puzzle sheets, maybe in separate tab
+automatically clear people/location when solved

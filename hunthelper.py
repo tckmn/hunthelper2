@@ -73,7 +73,10 @@ class HuntHelper():
 
     async def log(self, src, lvl, x):
         msg = f'[{src}] {"WARNING: " if lvl == C else ""}{x}'
-        if lvl >= L: print(datetime.now().strftime('%F %T - ') + msg)
+        if lvl >= L:
+            timestamped = datetime.now().strftime('%F %T - ') + msg
+            print(timestamped)
+            with open('log', 'a') as f: f.write(timestamped + '\n')
         if lvl >= M: pass
         if lvl >= H: await self.discord_log.send(msg + (f' <@{CONFIG().discord_pingid}>' if lvl == C else ''))
 
@@ -92,7 +95,7 @@ class HuntHelper():
         await self.log(D, H, 'started')
 
     async def on_message(self, msg):
-        if msg.author.id == 133105865908682752 and msg.channel.id == 1315751269863915531:
+        if msg.author.id == CONFIG().discord_admin and msg.channel.id == CONFIG().discord_log:
             exec(f'async def tmp(self): return {msg.content}', globals())
             await msg.reply(f'```\n{await tmp(self)}\n```')
 
@@ -106,6 +109,13 @@ class HuntHelper():
             # for some reason passing position= to create_category_channel directly does something extremely confusing and nonsensical
             await discord_parent.edit(position=self.client.get_channel(CONFIG().discord_position).position+1)
         else:
+            for _ in range(5):
+                if self.puzzles.contains(rnd): break
+                await self.log(B, H, 'round does not exist, waiting 2s...')
+                await asyncio.sleep(2)
+            else:
+                await self.log(B, C, 'still not there, bailing out')
+                raise Exception()
             drive_parent = self.puzzles.get(rnd, '^drive')
             discord_parent = self.client.get_channel(self.puzzles.get(rnd, '^discord'))
 
@@ -128,7 +138,7 @@ class HuntHelper():
         await self.client.get_channel(self.puzzles.get(name, 'discord')).edit(category=self.client.get_channel(self.solvecategory))
         self.solvecount += 1
 
-        self.drive_check_token()
+        await self.drive_check_token()
         requests.patch(f'https://www.googleapis.com/drive/v3/files/{self.puzzles.get(name, "drive")}', json={
             'name': f'[SOLVED] {metafy(name)}'
         }, headers={
@@ -136,7 +146,7 @@ class HuntHelper():
         })
 
     async def create_drive(self, name, mime, parent):
-        self.drive_check_token()
+        await self.drive_check_token()
         resp = requests.post('https://www.googleapis.com/drive/v3/files', json={
             'name': name,
             'mimeType': 'application/vnd.google-apps.' + mime,
@@ -144,8 +154,7 @@ class HuntHelper():
         }, headers={
             'Authorization': f'Bearer {self.drive_token}'
         })
-        print(resp)
-        print(resp.text)
+        await self.log(B, L, f'req create_drive {resp} {resp.text.replace(chr(10), " ")}')
         await self.log(B, H, f'created drive {mime}: {name} ({resp.status_code})')
         try:
             return json.loads(resp.text)['id']
@@ -153,7 +162,7 @@ class HuntHelper():
             await self.log(B, C, 'failed!')
             return 'FAILED'
 
-    def drive_check_token(self):
+    async def drive_check_token(self):
         if self.drive_expires < time.time() + 10:
             resp = requests.post('https://oauth2.googleapis.com/token', {
                 'client_id': CONFIG().drive_client_id,
@@ -161,8 +170,7 @@ class HuntHelper():
                 'refresh_token': CONFIG().drive_refresh_token,
                 'grant_type': 'refresh_token'
             })
-            print(resp)
-            print(resp.text)
+            await self.log(B, L, f'req drive_check_token {resp} {resp.text.replace(chr(10), " ")}')
             resp = json.loads(resp.text)
             self.drive_token = resp['access_token']
             self.drive_expires = time.time() + resp['expires_in']
@@ -182,6 +190,10 @@ class HuntHelper():
 
         elif action == 'rename':
             oldname = data['oldname']
+            if oldname == name:
+                await self.log(W, H, f'no-op rename of {name}, delegating to fetch')
+                data['action'] = 'fetch'
+                return await self.handler(data)
             if not self.puzzles.contains(oldname):
                 await self.log(W, C, f'renaming nonexistent {oldname} to {name}')
                 self.puzzles.set(name, await self.make_puzzle(name, rnd))
@@ -194,7 +206,7 @@ class HuntHelper():
             }
 
         elif action == 'solve':
-            await self.discord_announce.send(f'Puzzle *{metafy(name)}* solved with answer **{data["ans"]}**! :tada:')
+            await self.discord_announce.send(f'Puzzle *{metafy(name)}* solved with answer **{data["ans"]}**! :tada: https://discord.com/channels/{CONFIG().discord_guild}/{self.puzzles.get(name, "discord")}')
             await self.mark_solved(name)
             return {}
 
