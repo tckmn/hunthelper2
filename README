@@ -1,9 +1,3 @@
-(this readme is out of date)
-
-
-
-
-
 INTRODUCTION
 
 hunthelper is a tool designed to help medium-to-large sized teams organize
@@ -41,13 +35,14 @@ INSTRUCTIONS
    appropriate values as you go through steps 2-4. (The settings are described
    in further detail in the CONFIGURATION section below.)
 
-2. Set up port forwarding to the machine you want to run hunthelper on, and
-   forward port 80 to any port on that machine.
+2. Set up the desired port forwarding on the machine you want to run hunthelper
+   on. Any ports are fine, the external one goes in the sheets script and the
+   internal one goes in config.json.
 
 3. Create a Google Cloud Platform project at [1]. Enable the Drive API by
    following the instructions at [2], obtaining a client ID and secret. Obtain
    a refresh token with the /auth/drive scope at [3]. Copy the ID of the folder
-   you want puzzles to go in from its URL.
+   you want puzzles to go in from its URL. TODO: explain finnicky details
 
      [1]: https://console.developers.google.com
      [2]: https://developers.google.com/drive/api/v3/enable-drive-api
@@ -60,20 +55,7 @@ INSTRUCTIONS
 
      [4]: https://discord.com/developers/applications/
 
-5. Open your master sheet. Put
-
-     =IMPORTDATA("http://your.public.ip.address/_hunthelper_"&ENCODEURL( REGEXREPLACE(JOIN("~.",$X$n:$X$500), "(~\.)+$", "") & ".~~." & REGEXREPLACE(JOIN("~.",$Y$n:$Y$500), "(~\.)+$", "") ))
-
-   in row n of the column you want links in, where
-
-     X = column with puzzle names
-     Y = column with puzzle answers
-     n = row with first puzzle
-
-   If this randomly breaks sometimes, you may have to apply the workaround
-   described by Paolo Lacuesta at [5].
-
-     [5]: https://support.google.com/docs/forum/AAAABuH1jm0YMhLzXEfwkI/
+5. Hook up the master sheet. TODO: explain
 
 6. Run ./hunthelper.py from this directory for the duration of the hunt.
 
@@ -129,19 +111,35 @@ discord_announce
     The ID of the Discord channel in your server where you want messages
     relevant to all hunters to be announced (e.g. when a puzzle is solved).
 
-discord_role
-
-    The ID of the Discord role you want to give every new user automatically.
-
 discord_position
 
     The ID of the Discord channel under which new round categories should be
     created.
 
+discord_role
+
+    The ID of the Discord role you want to give every new user automatically.
+
+discord_admin
+
+    The ID of the Discord user who is allowed to execute arbitrary Python code
+    by typing it into the log channel.
+
+discord_who_working
+
+    The ID of the user or role you want to be the trigger for pinging everyone
+    who has edited the sheet of the corresponding puzzle.
+
 discord_pingid
 
     The ID of the user or role you want to be pinged when something important
     or unexpected that may require manual intervention occurs.
+
+drive2discord
+
+    A map from Google Drive person IDs to Discord IDs. A helpful and comically
+    fragile script for collecting these:
+    d={};setInterval(()=>{d[$('.YysZRb').textContent]=$('.jBPFKc').href},100)
 
 puzprefix
 

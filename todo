@@ -1,5 +1,3 @@
-new server setup???
-update docs
 race condition: can create puzzle twice
 when making puzzles really fast sometimes some queries don't get sent by sheets ("reconcile" operation?)
 manual operations to fix errors
@@ -7,9 +5,47 @@ special puzzles not in rounds (e.g. scavenger hunt)
 morse/a1/etc commands
 auto refresh hint pages and send messages about hint status
 hint queue that auto prints next hint to hint coordination channel
-auto delete stray content in link columns
-test suite that is allowed destructive actions
 automate who's working on puzzle by sheets users active
 also pingable version of above
 metadata in puzzle sheets, maybe in separate tab
+
+new server setup???
+update docs
+auto delete stray content in link columns
+test suite that is allowed destructive actions
 automatically clear people/location when solved
+
+    # async def test(self, asdf):
+    #     await self.drive_check_token()
+    #     resp = requests.get(f'https://www.googleapis.com/drive/v3/files/{asdf}/revisions?fields=*', headers={
+    #         'Authorization': f'Bearer {self.drive_token}'
+    #     })
+    #     return resp.text[:1900]
+
+    # async def p(self, asdf):
+    #     await self.drive_check_token()
+    #     resp = requests.get(f'https://people.googleapis.com/v1/{asdf}?personFields=addresses,ageRanges,biographies,birthdays,calendarUrls,clientData,coverPhotos,emailAddresses,events,externalIds,genders,imClients,interests,locales,locations,memberships,metadata,miscKeywords,names,nicknames,occupations,organizations,phoneNumbers,photos,relations,sipAddresses,skills,urls,userDefined', headers={
+    #         'Authorization': f'Bearer {self.drive_token}'
+    #     })
+    #     return resp.text
+
+    # async def c(self, asdf):
+    #     await self.drive_check_token()
+    #     resp = requests.get(f'https://people.googleapis.com/v1/people/me/connections?pageSize=1000&personFields=emailAddresses,names,nicknames', headers={
+    #         'Authorization': f'Bearer {self.drive_token}'
+    #     })
+    #     return resp.text
+
+    # async def d(self, asdf, asdf2=''):
+    #     await self.drive_check_token()
+    #     resp = requests.get(f'https://www.googleapis.com/drive/v3/files/{asdf}/permissions{asdf2}?fields=*', headers={
+    #         'Authorization': f'Bearer {self.drive_token}'
+    #     })
+    #     return resp.text
+
+    # async def e(self, asdf):
+    #     await self.drive_check_token()
+    #     resp = requests.get(f'https://people.googleapis.com/v1/people:searchContacts?query={asdf}&readMask=emailAddresses,names,nicknames', headers={
+    #         'Authorization': f'Bearer {self.drive_token}'
+    #     })
+    #     return resp.text

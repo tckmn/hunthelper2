@@ -6,6 +6,7 @@ import asyncio
 import discord
 import json
 import pickle
+import re
 import requests
 import time
 
@@ -52,6 +53,7 @@ class HuntHelper():
         self.drive_expires = 0
         self.solvecount = 0
         self.solvecategory = None
+        self.discord2drive = {}
 
     def init(self):
         intents = discord.Intents.default()
@@ -67,7 +69,8 @@ class HuntHelper():
             'drive_token': self.drive_token,
             'drive_expires': self.drive_expires,
             'solvecount': self.solvecount,
-            'solvecategory': self.solvecategory
+            'solvecategory': self.solvecategory,
+            'discord2drive': self.discord2drive
         }
     def __setstate__(self, d): self.__dict__ = d
 
@@ -98,6 +101,13 @@ class HuntHelper():
         if msg.author.id == CONFIG().discord_admin and msg.channel.id == CONFIG().discord_log:
             exec(f'async def tmp(self): return {msg.content}', globals())
             await msg.reply(f'```\n{await tmp(self)}\n```')
+            return
+        if msg.channel.id in self.discord2drive and (m := re.search(f'.*<@{CONFIG().discord_who_working}>|(\\bwho\\b)', msg.content)):
+            people = ' '.join(f'<@{CONFIG().drive2discord[x.split("/")[1]]}>'
+                              for x in set((await self.drive_activity(self.discord2drive[msg.channel.id]))[:-2]))
+            await msg.channel.send(("(not a ping) " if m.group(1) else "pinging ") + people if people else 'nobody has worked on this puzzle yet',
+                                   allowed_mentions=discord.AllowedMentions(users=not m.group(1)))
+            return
 
     async def make_puzzle(self, name, rnd):
         is_round = name[0] == '#'
@@ -121,6 +131,8 @@ class HuntHelper():
 
         drive = await self.create_drive(truename, 'spreadsheet', drive_parent)
         discord = await self.discord_guild.create_text_channel(truename.replace('[META] ', 'ᴹᴱᵀᴬ-'), category=discord_parent, topic=f'{self.puzlink(name)} | {self.drivelink(None, drive)}')
+
+        self.discord2drive[discord.id] = drive
 
         return {
             'drive': drive,
@@ -161,6 +173,15 @@ class HuntHelper():
         except:
             await self.log(B, C, 'failed!')
             return 'FAILED'
+
+    async def drive_activity(self, item):
+        await self.drive_check_token()
+        resp = requests.post('https://driveactivity.googleapis.com/v2/activity:query', json={
+            'itemName': 'items/'+item
+        }, headers={
+            'Authorization': f'Bearer {self.drive_token}'
+        })
+        return [x['actors'][0]['user']['knownUser']['personName'] for x in json.loads(resp.text)['activities'] if 'edit' in x['primaryActionDetail']]
 
     async def drive_check_token(self):
         if self.drive_expires < time.time() + 10:
@@ -206,7 +227,7 @@ class HuntHelper():
             }
 
         elif action == 'solve':
-            await self.discord_announce.send(f'Puzzle *{metafy(name)}* solved with answer **{data["ans"]}**! :tada: https://discord.com/channels/{CONFIG().discord_guild}/{self.puzzles.get(name, "discord")}')
+            await self.discord_announce.send(f'Puzzle *{metafy(name)}* solved with answer **{data["ans"]}**! :tada: <#{self.puzzles.get(name, "discord")}>')
             await self.mark_solved(name)
             return {}
 

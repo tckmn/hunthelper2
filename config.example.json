@@ -3,7 +3,7 @@
     "port":                1337,
     "drive_client_id":     "000000000000-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.apps.googleusercontent.com",
     "drive_client_secret": "AAAAAA-AAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "drive_refresh_token": "1//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "drive_refresh_token": "1//AAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "drive_root":          "aaaaaaaaaaaaa-aaaaaaaaaaaaaaaaaaa",
     "discord_bot":         "aaaaaaaaaaaaaaaaaaaaaaaa.aaaaaa.aaaaaaa-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "discord_guild":       0000000000000000000,
@@ -12,6 +12,10 @@
     "discord_position":    0000000000000000000,
     "discord_role":        0000000000000000000,
     "discord_admin":       0000000000000000000,
+    "discord_who_working": "&0000000000000000000",
     "discord_pingid":      "&0000000000000000000",
+    "drive2discord": {
+        "000000000000000000000": 000000000000000000
+    },
     "puzprefix":           "https://yewlabs.mit.edu/puzzles/"
 }
