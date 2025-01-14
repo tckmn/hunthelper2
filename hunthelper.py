@@ -227,7 +227,8 @@ class HuntHelper():
             }
 
         elif action == 'solve':
-            await self.discord_announce.send(f'Puzzle *{metafy(name)}* solved with answer **{data["ans"]}**! :tada: <#{self.puzzles.get(name, "discord")}>')
+            msg = await self.discord_announce.send(f'Puzzle *{metafy(name)}* solved with answer **{data["ans"]}**! :tada: <#{self.puzzles.get(name, "discord")}>')
+            await msg.add_reaction('🎉')
             await self.mark_solved(name)
             return {}
 
