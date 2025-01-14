@@ -102,10 +102,10 @@ class HuntHelper():
             exec(f'async def tmp(self): return {msg.content}', globals())
             await msg.reply(f'```\n{await tmp(self)}\n```')
             return
-        if msg.channel.id in self.discord2drive and (m := re.search(f'.*<@{CONFIG().discord_who_working}>|(\\bwho\\b)', msg.content)):
+        if msg.author.id != self.client.user.id and msg.channel.id in self.discord2drive and (m := re.search(f'.*<@{CONFIG().discord_who_working}>|(\\bwho\\b)', msg.content)):
             people = ' '.join(f'<@{CONFIG().drive2discord[x.split("/")[1]]}>'
                               for x in set((await self.drive_activity(self.discord2drive[msg.channel.id]))[:-2]))
-            await msg.channel.send(("(not a ping) " if m.group(1) else "pinging ") + people if people else 'nobody has worked on this puzzle yet',
+            await msg.channel.send(("(not a ping) people who have worked on this puzzle: " if m.group(1) else "pinging ") + people if people else 'nobody has worked on this puzzle yet',
                                    allowed_mentions=discord.AllowedMentions(users=not m.group(1)))
             return
 
