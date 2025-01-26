@@ -1,3 +1,8 @@
+fix duplicate puzzles
+pre-create + cache sheets for faster response time
+submetas in a round
+more robust normalize
+
 race condition: can create puzzle twice
 when making puzzles really fast sometimes some queries don't get sent by sheets ("reconcile" operation?)
 manual operations to fix errors
@@ -5,8 +10,6 @@ special puzzles not in rounds (e.g. scavenger hunt)
 morse/a1/etc commands
 auto refresh hint pages and send messages about hint status
 hint queue that auto prints next hint to hint coordination channel
-automate who's working on puzzle by sheets users active
-also pingable version of above
 metadata in puzzle sheets, maybe in separate tab
 
 new server setup???
@@ -14,6 +17,7 @@ update docs
 auto delete stray content in link columns
 test suite that is allowed destructive actions
 automatically clear people/location when solved
+streamline drive->discord process
 
     # async def test(self, asdf):
     #     await self.drive_check_token()
